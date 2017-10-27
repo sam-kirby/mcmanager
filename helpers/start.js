@@ -23,7 +23,7 @@ function genMonitor(server, apiRequest) {
             if(err) reject(err);
             var output = data.toString().replace(/£CODE/g, server.code);
             output = output.replace(/£REGION/g, apiRequest.env.region);
-            output = output.replace(/ACCOUNT/g, apiRequest.env.awsAccountId);
+            output = output.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId);
             output = output.replace(/£DOMAIN/g, apiRequest.env.domain);
             output = output.replace(/£HOSTEDZONEID/g, apiRequest.env.hostedZone);
             resolve(Buffer.from(output).toString('base64'));

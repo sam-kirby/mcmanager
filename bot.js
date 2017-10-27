@@ -108,7 +108,7 @@ function stop(server, apiRequest) {
         return new Promise((resolve,reject) => {
             if(state !== "active" && state !== "submitted") resolve(`It seems ${server.name} has already stopped or is stopping`);
             else {
-                sqs.sendMessage({QueueUrl: `https://sqs.${apiRequest.env.region}.amazonaws.com/${apiRequest.context.accountId}/${server.code}`,
+                sqs.sendMessage({QueueUrl: `https://sqs.${apiRequest.env.region}.amazonaws.com/${apiRequest.env.awsAccountId}/${server.code}`,
                 MessageBody: "na",
                 MessageAttributes: {
                     "cmd":{
