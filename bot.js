@@ -175,6 +175,7 @@ function direct(cmd, userID, apiRequest) {
         }
         if (cmd.substr(0,6) == "NOAUTH") {
             delete users[cmd.substr(7)];
+            users_modified = true;
             resolve(`Operation successful`);
         }
     });

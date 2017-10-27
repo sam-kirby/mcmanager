@@ -118,6 +118,7 @@ function start(server, apiRequest) {
             config = config.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId);
             config = config.replace(/£KEY/g, apiRequest.env.keyName);
             config = config.replace(/£SGID/g, apiRequest.env.sgid);
+            config = config.replace(/£MAXPRICE/g, server.maxprice);
             console.log(config);
             ec2.requestSpotFleet({SpotFleetRequestConfig: JSON.parse(config)}, (err, data) => {
                 if (err) reject(err);
