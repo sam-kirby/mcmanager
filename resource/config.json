@@ -1,0 +1,42 @@
+{
+  "IamFleetRole": "arn:aws:iam::£ACCOUNT:role/aws-ec2-spot-fleet-tagging-role",
+  "AllocationStrategy": "lowestPrice",
+  "TargetCapacity": 1,
+  "SpotPrice": "0.362",
+  "ValidFrom": "£FROM",
+  "ValidUntil": "£TO",
+  "TerminateInstancesWithExpiration": true,
+  "LaunchSpecifications": [
+    {
+      "ImageId": "ami-cc7066a8",
+      "InstanceType": "£INSTANCETYPE",
+      "KeyName": "£KEY",
+      "SpotPrice": "0.362",
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::£ACCOUNT:instance-profile/mcserver"
+      },
+      "BlockDeviceMappings": [
+        {
+          "DeviceName": "/dev/sda1",
+          "Ebs": {
+            "DeleteOnTermination": true,
+            "VolumeType": "gp2",
+            "VolumeSize": 8,
+            "SnapshotId": "snap-0987ef804f13112e7"
+          }
+        },
+        {
+          "DeviceName": "/dev/xvdca",
+          "VirtualName": "ephemeral0"
+        }
+      ],
+      "SecurityGroups": [
+        {
+          "GroupId": "£SGID"
+        }
+      ],
+      "UserData": "£UDATA"
+    }
+  ],
+  "Type": "request"
+}
