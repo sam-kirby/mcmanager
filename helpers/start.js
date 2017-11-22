@@ -143,8 +143,7 @@ function start(server, apiRequest) {
             server.lastSFR = response;
             server.lastState = "Started";
             discord(server.name, "started", apiRequest);
-            return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain} 
-            Please wait 5 minutes before connecting or checking its status`;
+            return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}.\nPlease wait 5 minutes before connecting or checking its status`;
         }
         else return response;
     })
