@@ -72,6 +72,12 @@ function genUserData(server, apiRequest) {
     });
 }
 
+/**
+ * Generate userdata for requested server, determine if spot price is low enough, and then submit an SFR
+ * @param server
+ * @param apiRequest
+ * @returns {Promise.<TResult>}
+ */
 function start(server, apiRequest) {
     let config;
     return new Promise((resolve, reject) => {
@@ -89,7 +95,8 @@ function start(server, apiRequest) {
         config = config.replace(/£UDATA/g, userData);
         //check if spot price is below max in any availability zone
         return new Promise((resolve, reject) => {
-            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2a', InstanceTypes:[server.instance], MaxResults:1}, (err, result) => {
+            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2a', InstanceTypes:[server.instance], MaxResults:1},
+                (err, result) => {
                 if (err) reject(err);
                 else resolve(parseFloat(result.SpotPriceHistory[0].SpotPrice));
             });
@@ -97,7 +104,8 @@ function start(server, apiRequest) {
     })
     .then((spA) => {
         if (spA > parseFloat(server.maxprice)) return new Promise((resolve, reject) => {
-            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2b', InstanceTypes:[server.instance], MaxResults:1}, (err, result) => {
+            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2b', InstanceTypes:[server.instance], MaxResults:1},
+                (err, result) => {
                 if (err) reject(err);
                 else resolve(parseFloat(result.SpotPriceHistory[0].SpotPrice));
             });
@@ -135,7 +143,8 @@ function start(server, apiRequest) {
             server.lastSFR = response;
             server.lastState = "Started";
             discord(server.name, "started", apiRequest);
-            return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain} Please wait 5 minutes before connecting or checking its status`;
+            return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain} 
+            Please wait 5 minutes before connecting or checking its status`;
         }
         else return response;
     })

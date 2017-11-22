@@ -28,6 +28,13 @@ function readS3File(bucket, filename) {
     });
 }
 
+/**
+ * Writes a file to s3, the returned promise does not resolve anything, but rejects errors
+ * @param {string} bucket
+ * @param {string} filename
+ * @param {string} body
+ * @returns {Promise}
+ */
 function writeS3File(bucket, filename, body) {
     return new Promise((resolve, reject) => {
         s3.putObject({Body: body, Bucket: bucket, Key: filename}, (err, data) => {
@@ -48,6 +55,13 @@ function readS3JSON(bucket, filename) {
     });
 }
 
+/**
+ * Writes a JSON serializable object to s3
+ * @param bucket
+ * @param filename
+ * @param object
+ * @returns {Promise}
+ */
 function writeS3JSON(bucket, filename, object) {
     return writeS3File(bucket, filename, JSON.stringify(object));
 }
@@ -73,6 +87,11 @@ function getUserName(id, access_token) {
     });
 }
 
+/**
+ * Determines if a user has been approved to use this bot
+ * @param userID
+ * @returns {boolean}
+ */
 function userAuthenticated(userID) {
     if (users[userID]) {
         if (users[userID].authorised) return true;
@@ -80,6 +99,10 @@ function userAuthenticated(userID) {
     return false;
 }
 
+/**
+ * Generates the main menu using the server list. Facebook supports a maximum of 5 servers.
+ * @returns {*}
+ */
 function main_menu()
 {
     let reply = new fbTemplate.Generic();
@@ -93,6 +116,13 @@ function main_menu()
     return reply.get();
 }
 
+/**
+ * Determines the state of a server, and if it is still running attempts to stop it.
+ * TODO: Check the spot request has a running instance associated with it
+ * @param server
+ * @param apiRequest
+ * @returns {Promise.<TResult>}
+ */
 function stop(server, apiRequest) {
     return new Promise((resolve, reject) => {
         //check still running
@@ -122,6 +152,13 @@ function stop(server, apiRequest) {
     });
 }
 
+/**
+ * Function for directing commands to appropriate functions
+ * @param cmd
+ * @param userID
+ * @param apiRequest
+ * @returns {Promise}
+ */
 function direct(cmd, userID, apiRequest) {
     return new Promise((resolve, reject) => {
         if (cmd === 'GET_STARTED')
@@ -180,6 +217,12 @@ function direct(cmd, userID, apiRequest) {
     });
 }
 
+/**
+ * Initial message handler
+ * @param message
+ * @param apiRequest
+ * @returns {Promise.<TResult>}
+ */
 function handleMessage(message, apiRequest) {
     return readS3JSON(apiRequest.env.configBucket, "users.json")
     .then((data) => {

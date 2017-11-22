@@ -8,7 +8,7 @@
   "TerminateInstancesWithExpiration": true,
   "LaunchSpecifications": [
     {
-      "ImageId": "ami-cc7066a8",
+      "ImageId": "ami-ecbea388",
       "InstanceType": "£INSTANCETYPE",
       "KeyName": "£KEY",
       "SpotPrice": "0.362",
@@ -22,7 +22,7 @@
             "DeleteOnTermination": true,
             "VolumeType": "gp2",
             "VolumeSize": 8,
-            "SnapshotId": "snap-0987ef804f13112e7"
+            "SnapshotId": "snap-0a1b6a2db95ec7d94"
           }
         },
         {
