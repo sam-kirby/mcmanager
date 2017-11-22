@@ -1,13 +1,13 @@
-var fs = require('fs'),
-    aws = require('aws-sdk'),
-    ec2 = new aws.EC2()
-    discord = require('./discord');
+const fs = require('fs');
+const aws = require('aws-sdk');
+const ec2 = new aws.EC2();
+const discord = require('./discord');
 
 function genService(server, apiRequest) {
     return new Promise((resolve, reject) => {
         fs.readFile("./resource/mcserver.sh", (err, data) => {
             if (err) reject(err);
-            var output = data.toString().replace(/£JAR/g, server.special.jar);
+            let output = data.toString().replace(/£JAR/g, server.special.jar);
             output = output.replace(/£MAXMEM/g, server.special.maxmem);
             output = output.replace(/£CODE/g, server.code);
             output = output.replace(/£WORLD/g, apiRequest.env.worldBucket);
@@ -21,7 +21,7 @@ function genMonitor(server, apiRequest) {
     return new Promise((resolve, reject) => {
         fs.readFile("./resource/monitor.sh", (err, data) => {
             if(err) reject(err);
-            var output = data.toString().replace(/£CODE/g, server.code);
+            let output = data.toString().replace(/£CODE/g, server.code);
             output = output.replace(/£REGION/g, apiRequest.env.region);
             output = output.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId);
             output = output.replace(/£DOMAIN/g, apiRequest.env.domain);
@@ -35,7 +35,7 @@ function genPrepare(server, apiRequest) {
     return new Promise((resolve, reject) => {
         fs.readFile("./resource/prepare.sh", (err,data) => {
             if (err) reject(err);
-            var output = data.toString().replace(/£CODE/g, server.code);
+            let output = data.toString().replace(/£CODE/g, server.code);
             output = output.replace(/£REGION/g, apiRequest.env.region);
             output = output.replace(/£HOSTEDZONEID/g, apiRequest.env.hostedZone);
             output = output.replace(/£DOMAIN/g, apiRequest.env.domain);
@@ -47,7 +47,7 @@ function genPrepare(server, apiRequest) {
 }
 
 function genUserData(server, apiRequest) {
-    var userData;
+    let userData;
     return new Promise((resolve, reject) => {
         fs.readFile("./resource/userdata.yml", (err, data) => {
             if (err) reject(err);
@@ -73,7 +73,7 @@ function genUserData(server, apiRequest) {
 }
 
 function start(server, apiRequest) {
-    var config;
+    let config;
     return new Promise((resolve, reject) => {
         if (server.lastState === "Started")
             reject(`${server.name} must be stopped first`);
@@ -111,21 +111,23 @@ function start(server, apiRequest) {
     .then((priceGood) => {
         return new Promise((resolve, reject) => {
             if (!priceGood) reject(`Spot instance price is currently too high to start ${server.name}`);
-            now = new Date();
-            config = config.replace(/£FROM/g, now.toISOString());
-            config = config.replace(/£TO/g, new Date(now.getTime() + 64800000).toISOString());
-            config = config.replace(/£INSTANCETYPE/g, server.instance);
-            config = config.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId);
-            config = config.replace(/£KEY/g, apiRequest.env.keyName);
-            config = config.replace(/£SGID/g, apiRequest.env.sgid);
-            config = config.replace(/£MAXPRICE/g, server.maxprice);
-            console.log(config);
-            ec2.requestSpotFleet({SpotFleetRequestConfig: JSON.parse(config)}, (err, data) => {
-                if (err) reject(err);
-                else {
-                    resolve(data.SpotFleetRequestId);
-                }
-            });
+            else {
+                let now = new Date();
+                config = config.replace(/£FROM/g, now.toISOString());
+                config = config.replace(/£TO/g, new Date(now.getTime() + 64800000).toISOString());
+                config = config.replace(/£INSTANCETYPE/g, server.instance);
+                config = config.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId);
+                config = config.replace(/£KEY/g, apiRequest.env.keyName);
+                config = config.replace(/£SGID/g, apiRequest.env.sgid);
+                config = config.replace(/£MAXPRICE/g, server.maxprice);
+                console.log(config);
+                ec2.requestSpotFleet({SpotFleetRequestConfig: JSON.parse(config)}, (err, data) => {
+                    if (err) reject(err);
+                    else {
+                        resolve(data.SpotFleetRequestId);
+                    }
+                });
+            }
         });
     })
     .then((response) => {

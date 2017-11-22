@@ -1,21 +1,18 @@
-var botBuilder = require('claudia-bot-builder'),
-    fbTemplate = botBuilder.fbTemplate,
-    aws = require('aws-sdk'),
-    s3 = new aws.S3(),
-    ec2 = new aws.EC2(),
-    sqs = new aws.SQS(),
-    fs = require('fs'),
-    mcstatus = require('minecraft-pinger'),
-    request = require('request'),
-    start = require('./helpers/start'),
-    discord = require('./helpers/discord');
+const botBuilder = require('claudia-bot-builder');
+const fbTemplate = botBuilder.fbTemplate;
+const aws = require('aws-sdk');
+const s3 = new aws.S3();
+const ec2 = new aws.EC2();
+const sqs = new aws.SQS();
+const mcstatus = require('minecraft-pinger');
+const request = require('request');
+const start = require('./helpers/start');
+const discord = require('./helpers/discord');
 
-const BUCKET = "mcmanager";
-
-var users;
-var servers;
-var servers_modified = false;
-var users_modified = false;
+let users;
+let servers;
+let servers_modified = false;
+let users_modified = false;
 
 /**
  * Retrieves files from Amazon s3, returning a promise which when resolved gives the file body.
@@ -85,8 +82,8 @@ function userAuthenticated(userID) {
 
 function main_menu()
 {
-    var reply = new fbTemplate.Generic();
-    for(var id in servers) {
+    let reply = new fbTemplate.Generic();
+    for(let id in servers) {
         reply.addBubble(servers[id].name, servers[id].subtitle)
         .addImage(servers[id].image)
         .addButton("Start", `START_${servers[id].code}`)
@@ -106,9 +103,11 @@ function stop(server, apiRequest) {
     })
     .then((state) => {
         return new Promise((resolve,reject) => {
-            if(state !== "active" && state !== "submitted") resolve(`It seems ${server.name} has already stopped or is stopping`);
+            if(state !== "active" && state !== "submitted")
+                resolve(`It seems ${server.name} has already stopped or is stopping`);
             else {
-                sqs.sendMessage({QueueUrl: `https://sqs.${apiRequest.env.region}.amazonaws.com/${apiRequest.env.awsAccountId}/${server.code}`,
+                sqs.sendMessage({QueueUrl:
+                    `https://sqs.${apiRequest.env.region}.amazonaws.com/${apiRequest.env.awsAccountId}/${server.code}`,
                 MessageBody: "na",
                 MessageAttributes: {
                     "cmd":{
@@ -135,12 +134,12 @@ function direct(cmd, userID, apiRequest) {
             resolve(`You're notification setting is: ${users[userID].notify}`);
         }
         if (cmd.substr(0,5) === 'START') {
-            var target = servers[cmd.substr(6)];
+            let target = servers[cmd.substr(6)];
             servers_modified=true;
             resolve(start(target, apiRequest));
         }
         if (cmd.substr(0,4) === 'STOP') {
-            var target = servers[cmd.substr(5)];
+            let target = servers[cmd.substr(5)];
             if (target.lastState === "Stopped") resolve(`It doesn't look like ${target.name} is running`);
             else {
                 discord(target.name, "stopped", apiRequest);
@@ -151,7 +150,7 @@ function direct(cmd, userID, apiRequest) {
         }
         if (cmd.substr(0,6) === 'STATUS') {
             if(cmd.length === 6) resolve("this functionality is not yet ready - sorry!");
-            var target = servers[cmd.substr(7)];
+            let target = servers[cmd.substr(7)];
             //check sfr state
             //use mcstatus to get online users
             resolve("this functionality is not yet ready - sorry!");
@@ -159,7 +158,7 @@ function direct(cmd, userID, apiRequest) {
         if (cmd.substr(0,5) === 'ADMIN') {
             if (users[userID].admin) {
                 if (cmd.substr(6) === "APPROVE") {
-                    for (var user in users) {
+                    for (let user in users) {
                         if (!users[user].authorised) resolve(new fbTemplate.Text(`User ${users[user].first_name} ${users[user].last_name} not authorised`)
                         .addQuickReply('Approve', `AUTH_${user}`)
                         .addQuickReply('Deny', `NOAUTH_${user}`).get());
@@ -173,7 +172,7 @@ function direct(cmd, userID, apiRequest) {
             users_modified = true;
             resolve(`Operation successful`);
         }
-        if (cmd.substr(0,6) == "NOAUTH") {
+        if (cmd.substr(0,6) === "NOAUTH") {
             delete users[cmd.substr(7)];
             users_modified = true;
             resolve(`Operation successful`);

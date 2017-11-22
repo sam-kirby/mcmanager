@@ -1,4 +1,4 @@
-var request = require('request');
+const request = require('request');
 
 function sendDiscordMessage(name, action, apiRequest) {
     request({

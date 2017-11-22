@@ -2,7 +2,7 @@
   "IamFleetRole": "arn:aws:iam::£ACCOUNT:role/aws-ec2-spot-fleet-tagging-role",
   "AllocationStrategy": "lowestPrice",
   "TargetCapacity": 1,
-  "SpotPrice": "0.362",
+  "SpotPrice": "£MAXPRICE",
   "ValidFrom": "£FROM",
   "ValidUntil": "£TO",
   "TerminateInstancesWithExpiration": true,
