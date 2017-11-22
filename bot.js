@@ -217,7 +217,7 @@ function handleMessage(message, apiRequest) {
             }
         }
         console.log(err);
-        return "An error has occured and has been logged.";
+        return `An error has occurred and has been logged:\n${err}`;
     });
 }
 
@@ -228,6 +228,7 @@ const api = botBuilder((message, apiRequest) => {
     .then((response) => {
         if (servers_modified) writeS3JSON(apiRequest.env.configBucket, "servers.json", servers);
         if (users_modified) writeS3JSON(apiRequest.env.configBucket, "users.json", users);
+        console.log(response);
         return response;
     });
 },{platforms: ['facebook']});

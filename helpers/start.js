@@ -103,8 +103,7 @@ function start(server, apiRequest) {
             });
         })
         .then((spB) => {
-            if (spB > parseFloat(server.maxprice)) return false;
-            else return true;
+            return spB <= parseFloat(server.maxprice);
         });
         else return true;
     })
