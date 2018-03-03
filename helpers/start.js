@@ -95,7 +95,7 @@ function start(server, apiRequest) {
         config = config.replace(/£UDATA/g, userData);
         //check if spot price is below max in any availability zone
         return new Promise((resolve, reject) => {
-            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2a', InstanceTypes:[server.instance], MaxResults:1},
+            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2a', InstanceTypes:[server.instance], MaxResults:1, ProductDescriptions:["Linux/UNIX"]},
                 (err, result) => {
                 if (err) reject(err);
                 else resolve(parseFloat(result.SpotPriceHistory[0].SpotPrice));
@@ -104,14 +104,24 @@ function start(server, apiRequest) {
     })
     .then((spA) => {
         if (spA > parseFloat(server.maxprice)) return new Promise((resolve, reject) => {
-            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2b', InstanceTypes:[server.instance], MaxResults:1},
+            ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2b', InstanceTypes:[server.instance], MaxResults:1, ProductDescriptions:["Linux/UNIX"]},
                 (err, result) => {
                 if (err) reject(err);
                 else resolve(parseFloat(result.SpotPriceHistory[0].SpotPrice));
             });
         })
         .then((spB) => {
-            return spB <= parseFloat(server.maxprice);
+            if (spB > parseFloat(server.maxprice)) return new Promise((resolve, reject) => {
+                ec2.describeSpotPriceHistory({AvailabilityZone:'eu-west-2c', InstanceTypes:[server.instance], MaxResults:1, ProductDescriptions:["Linux/UNIX"]},
+                    (err, result) => {
+                    if (err) reject(err);
+                    else resolve(parseFloat(result.SpotPriceHistory[0].SpotPrice));
+                });
+            })
+            else return true
+        })
+        .then((spC) => {
+            return spC <= parseFloat(server.maxprice);
         });
         else return true;
     })

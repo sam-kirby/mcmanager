@@ -1,3 +1,4 @@
+'use strict';
 const botBuilder = require('claudia-bot-builder');
 const fbTemplate = botBuilder.fbTemplate;
 const aws = require('aws-sdk');
@@ -149,6 +150,15 @@ function stop(server, apiRequest) {
                 });
             }
         });
+    });
+}
+
+
+function status(code, apiRequest) {
+    return mcstatus.pingPromise(code + apiRequest.env.domain, '25565').then((result) => {
+
+    }).catch((err) => {
+        if (err.code === "ENOTFOUND");
     });
 }
 
