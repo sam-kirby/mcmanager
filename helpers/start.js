@@ -117,7 +117,7 @@ function start(server, apiRequest) {
                     if (err) reject(err);
                     else resolve(parseFloat(result.SpotPriceHistory[0].SpotPrice));
                 });
-            })
+            });
             else return true
         })
         .then((spC) => {
@@ -153,7 +153,7 @@ function start(server, apiRequest) {
             server.lastSFR = response;
             server.lastState = "Started";
             discord(server.name, "started", apiRequest);
-            return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}.\nPlease wait 5 minutes before connecting or checking its status`;
+            return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}\nPlease wait 5 minutes before connecting or checking its status`;
         }
         else return response;
     })

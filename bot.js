@@ -178,7 +178,7 @@ function direct(cmd, userID, apiRequest) {
         if (cmd === 'NOTIFY') {
             users[userID].notify = !users[userID].notify;
             users_modified = true;
-            resolve(`You're notification setting is: ${users[userID].notify}`);
+            resolve(`Your notification setting is: ${users[userID].notify}`);
         }
         if (cmd.substr(0,5) === 'START') {
             let target = servers[cmd.substr(6)];

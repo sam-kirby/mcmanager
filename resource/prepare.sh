@@ -8,9 +8,9 @@ WORLD="£WORLD"
 
 pip3 install awscli
 mkdir /media/mc
-parted /dev/nvme0n1 --script mklabel gpt mkpart primary 0% 100%
+parted /dev/nvme1n1 --script mklabel gpt mkpart primary 0% 100%
 sync
-mkfs.ext4 /dev/nvme0n1p1 -L mc
+mkfs.ext4 /dev/nvme1n1p1 -L mc
 sync
 echo -e "LABEL=mc\t/media/mc\text4\tdefaults\t0\t0" >> /etc/fstab
 mount -a
@@ -25,6 +25,6 @@ update-rc.d monitor.sh defaults 100
 sync
 
 IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
-aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch "{\"Changes\": [{\"Action\": \"UPSERT\",\"ResourceRecordSet\": {\"Name\": \"$CODE.$DOMAIN\",\"Type\": \"A\", \"TTL\":300, \"ResourceRecords\": [ { \"Value\": \"$IP\" } ] } } ] }"
+aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch "{\"Changes\": [{\"Action\": \"UPSERT\",\"ResourceRecordSet\": {\"Name\": \"$CODE.$DOMAIN\",\"Type\": \"A\", \"TTL\":15, \"ResourceRecords\": [ { \"Value\": \"$IP\" } ] } } ] }"
 
 curl http://169.254.169.254/latest/meta-data/instance-id >> /id.txt

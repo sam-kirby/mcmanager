@@ -9,10 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.188.0",
-    "claudia-bot-builder": "^2.15.2",
+    "aws-sdk": "^2.315.0",
+    "claudia-bot-builder": "^4",
     "fs": "0.0.1-security",
     "minecraft-pinger": "^1.0.3",
-    "request": "^2.83.0"
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "claudia": "^5.1.1"
   }
 }
