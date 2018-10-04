@@ -4,7 +4,7 @@ repo_upgrade: all
 package_upgrade: true
 
 packages:
-  - default-jre
+  - openjdk-8-jre
   - awscli
   - python3-pip
 
