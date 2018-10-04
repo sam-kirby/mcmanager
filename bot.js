@@ -135,6 +135,11 @@ function stop(server, apiRequest) {
         return new Promise((resolve,reject) => {
             if(state !== "active" && state !== "submitted")
                 resolve(`It seems ${server.name} has already stopped or is stopping`);
+            else if (state === "submitted")
+                ec2.cancelSpotFleetRequests({SpotFleetRequestIds: [server.lastSFR]}, (err, data) => {
+                   if (err) reject(err);
+                   else resolve(`Server ${server.name} had not yet been fulfilled - the request has been cancelled`);
+                });
             else {
                 sqs.sendMessage({QueueUrl:
                     `https://sqs.${apiRequest.env.region}.amazonaws.com/${apiRequest.env.awsAccountId}/${server.code}`,
