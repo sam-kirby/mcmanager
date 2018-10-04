@@ -28,15 +28,15 @@ status() {
   if [ "$(aws ec2 describe-spot-instance-requests --filter Name=instance-id,Values=$ID --query "SpotFleetRequests[0].Status.Code" --output text --region $REGION)" == "marked-for-termination" ]; then
     terminate
   fi
-  command=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --message-attribute-names cmd --query "Messages[0].{cmd : MessageAttributes.cmd.StringValue}" --region $REGION --output text)
-  if [ $command == "stop" ]; then
+  message=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --message-attribute-names cmd user --query "Messages[0].{cmd : MessageAttributes.cmd.StringValue, user : MessageAttributes.user.StringValue}" --region $REGION --output text)
+  commandArray=($message)
+  if [ ${commandArray[0]} == "stop" ]; then
     aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
     terminate
   fi
-  if [ $command == "status" ]; then
-    user=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --message-attribute-names user --query "Messages[0].{user : MessageAttributes.user.StringValue}" --region $REGION --output text)
+  if [ ${commandArray[0]} == "status" ]; then
     aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
-    status
+    status ${commandArray[1]}
   fi
   sleep 5
 done) &
