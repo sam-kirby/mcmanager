@@ -158,7 +158,7 @@ function stop(server, apiRequest) {
 }
 
 
-function status(code, userID, apiRequest) {
+function status(server, userID, apiRequest) {
     return new Promise((resolve, reject) => {
         //check still running
         ec2.describeSpotFleetRequests({SpotFleetRequestIds: [server.lastSFR]}, (err, data) => {
