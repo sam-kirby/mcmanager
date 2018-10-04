@@ -26,6 +26,7 @@ function genMonitor(server, apiRequest) {
             output = output.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId);
             output = output.replace(/£DOMAIN/g, apiRequest.env.domain);
             output = output.replace(/£HOSTEDZONEID/g, apiRequest.env.hostedZone);
+            output = output.replace(/£FBTOKEN/g, apiRequest.env.facebookAccessToken);
             resolve(Buffer.from(output).toString('base64'));
         });
     });

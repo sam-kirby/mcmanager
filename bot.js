@@ -5,7 +5,6 @@ const aws = require('aws-sdk');
 const s3 = new aws.S3();
 const ec2 = new aws.EC2();
 const sqs = new aws.SQS();
-const mcstatus = require('minecraft-pinger');
 const request = require('request');
 const start = require('./helpers/start');
 const discord = require('./helpers/discord');
@@ -154,12 +153,39 @@ function stop(server, apiRequest) {
 }
 
 
-function status(code, apiRequest) {
-    return mcstatus.pingPromise(code + apiRequest.env.domain, '25565').then((result) => {
-
-    }).catch((err) => {
-        if (err.code === "ENOTFOUND");
-    });
+function status(code, userID, apiRequest) {
+    return new Promise((resolve, reject) => {
+        //check still running
+        ec2.describeSpotFleetRequests({SpotFleetRequestIds: [server.lastSFR]}, (err, data) => {
+            if (err) reject(err);
+            else resolve(data.SpotFleetRequestConfigs[0].SpotFleetRequestState);
+        });
+    })
+        .then((state) => {
+            return new Promise((resolve,reject) => {
+                if(state !== "active" && state !== "submitted")
+                    resolve(`It seems ${server.name} is currently not running`);
+                else if(state === "submitted")
+                    resolve(`The spot request has been submitted but not yet fulfilled`);
+                else {
+                    sqs.sendMessage({QueueUrl:
+                            `https://sqs.${apiRequest.env.region}.amazonaws.com/${apiRequest.env.awsAccountId}/${server.code}`,
+                        MessageBody: "na",
+                        MessageAttributes: {
+                            "cmd":{
+                                DataType: "String",
+                                StringValue: "status"
+                            },
+                            "user": {
+                                DataType: "String",
+                                StringValue: userID
+                            }}}, (err, data) => {
+                        if (err) reject(err);
+                        else resolve(`Server ${server.name} has been asked to provide you with its current status.`);
+                    });
+                }
+            });
+        });
 }
 
 /**
@@ -196,11 +222,8 @@ function direct(cmd, userID, apiRequest) {
             }
         }
         if (cmd.substr(0,6) === 'STATUS') {
-            if(cmd.length === 6) resolve("this functionality is not yet ready - sorry!");
             let target = servers[cmd.substr(7)];
-            //check sfr state
-            //use mcstatus to get online users
-            resolve("this functionality is not yet ready - sorry!");
+            resolve(status(target, userID, apiRequest));
         }
         if (cmd.substr(0,5) === 'ADMIN') {
             if (users[userID].admin) {
