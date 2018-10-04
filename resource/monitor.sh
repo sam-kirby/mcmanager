@@ -29,11 +29,11 @@ status() {
     terminate
   fi
   command=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --message-attribute-names cmd --query "Messages[0].{cmd : MessageAttributes.cmd.StringValue}" --region $REGION --output text)
-  if [ command == "stop" ]; then
+  if [ $command == "stop" ]; then
     aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
     terminate
   fi
-  if [ command == "status" ]; then
+  if [ $command == "status" ]; then
     user=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --message-attribute-names user --query "Messages[0].{user : MessageAttributes.user.StringValue}" --region $REGION --output text)
     aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
     status
