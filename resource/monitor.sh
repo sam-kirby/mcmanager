@@ -8,7 +8,8 @@ HOSTEDZONEID="£HOSTEDZONEID"
 DOMAIN="£DOMAIN"
 FBTOKEN="£FBTOKEN"
 
-SFR=$(aws ec2 describe-instances --instance-ids $ID --query "Reservations[0].Instances[0].Tags[0].Value" --output text --region $REGION)
+SFR=$(aws ec2 describe-instances --instance-ids $ID --query "Reservations[0].Instances[0].Tags[0].Value"\
+  --output text --region $REGION)
 
 terminate() {
   aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch "{\"Changes\": [{\"Action\": \"DELETE\",\"ResourceRecordSet\": {\"Name\": \"$CODE.$DOMAIN\",\"Type\": \"A\", \"TTL\":15, \"ResourceRecords\": [ { \"Value\": \"$IP\" } ] } } ] }"
@@ -18,17 +19,26 @@ terminate() {
 }
 
 status() {
+
   curl -X POST -H "Content-Type: application/json" -d '{
+    "messaging-type": "MESSAGE_TAG",
+    "tag": "GAME_EVENT",
     "recipient": { "id": '$1' },
-    "message": { "text": "WIP FEATURE: Instance is still running...\nThis does not guarantee that Minecraft has not crashed" }
-  }' "https://graph.facebook.com/v2.6/me/messages?access_token=$FBTOKEN"
+    "message": {
+      "text": "WIP FEATURE: Instance is still running...\nThis does not guarantee that Minecraft has not crashed"
+    }
+  }' "https://graph.facebook.com/v3.1/me/messages?access_token=$FBTOKEN"
 }
 
 (while true; do
-  if [ "$(aws ec2 describe-spot-instance-requests --filter Name=instance-id,Values=$ID --query "SpotFleetRequests[0].Status.Code" --output text --region $REGION)" == "marked-for-termination" ]; then
+  if [ "$(aws ec2 describe-spot-instance-requests --filter Name=instance-id,Values=$ID\
+   --query "SpotFleetRequests[0].Status.Code" --output text --region $REGION)" == "marked-for-termination" ]; then
     terminate
   fi
-  message=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --message-attribute-names cmd user --query "Messages[0].{cmd : MessageAttributes.cmd.StringValue, user : MessageAttributes.user.StringValue}" --region $REGION --output text)
+  message=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE\
+    --message-attribute-names cmd user\
+    --query "Messages[0].{cmd : MessageAttributes.cmd.StringValue, user : MessageAttributes.user.StringValue}"\
+    --region $REGION --output text)
   commandArray=($message)
   if [ ${commandArray[0]} == "stop" ]; then
     aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
