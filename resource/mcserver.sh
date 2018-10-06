@@ -15,24 +15,24 @@ PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
 APPDIR="/media/mc"
 APPBIN="tmux"
 SESSION=$NAME
-USER="ubuntu"
+USER="ec2-user"
 JAVACMD="java"
 JAVAMAXMEM="£MAXMEM"
 JARFILE="£JAR"
 CODE="£CODE"
 REGION="£REGION"
-#MCARGS="$JAVACMD -server -Xms512M -Xmx$JAVAMAXMEM -XX:PermSize=256M -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -jar $JARFILE" nogui
-MCARGS="$JAVACMD -server -Xms512M -Xmx$JAVAMAXMEM -XX:+UseG1GC -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -Dfml.readTimeout=180 -jar $JARFILE" nogui
+#MCARGS="$JAVACMD -server -Xms512M -Xmx$JAVAMAXMEM -XX:PermSize=256M -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -jar $JARFILE nogui"
+MCARGS="$JAVACMD -server -Xms512M -Xmx$JAVAMAXMEM -XX:+UseG1GC -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -Dfml.readTimeout=180 -jar $JARFILE nogui"
 BUCKET="s3://£WORLD/$CODE"
 
 # Include functions
 set -e
-. /lib/lsb/init-functions
+#. /lib/lsb/init-functions
 
 start() {
   printf "Starting '$NAME'... "
   cd $APPDIR
-  su $USER -c "$APPBIN new-session -d -s $SESSION $MCARGS"
+  su $USER -c "$APPBIN new-session -d -s $SESSION \"$MCARGS\""
   printf "done\n"
 }
 
@@ -40,22 +40,22 @@ start() {
 
 stop() {
   printf "Stopping '$NAME'... "
-  $APPBIN -S /tmp/tmux-"$(id -u ubuntu)"/default send-keys -t $SESSION.0 "say Server will go down after completing a backup..." Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "say Server will go down after completing a backup..." Enter
   backup
   sleep 10
-  $APPBIN -S /tmp/tmux-"$(id -u ubuntu)"/default send-keys -t $SESSION.0 "stop" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "stop" Enter
   sleep 5
-  $APPBIN -S /tmp/tmux-"$(id -u ubuntu)"/default kill-session -t $SESSION
+  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default kill-session -t $SESSION
   printf "done\n"
 }
 
 backup() {
   printf "Starting server backup of '$NAME'..."
-  $APPBIN -S /tmp/tmux-"$(id -u ubuntu)"/default send-keys -t $SESSION.0 "say Starting a server backup..." Enter
-  $APPBIN -S /tmp/tmux-"$(id -u ubuntu)"/default send-keys -t $SESSION.0 "save-off" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "say Starting a server backup..." Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "save-off" Enter
   aws s3 sync $APPDIR/world $BUCKET --delete --region $REGION
-  $APPBIN -S /tmp/tmux-"$(id -u ubuntu)"/default send-keys -t $SESSION.0 "save-on" Enter
-  $APPBIN -S /tmp/tmux-"$(id -u ubuntu)"/default send-keys -t $SESSION.0 "say Server backup is complete!" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "save-on" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "say Server backup is complete!" Enter
   printf "done\n"
 }
 

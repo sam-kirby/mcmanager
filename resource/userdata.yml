@@ -4,9 +4,8 @@ repo_upgrade: all
 package_upgrade: true
 
 packages:
-  - openjdk-8-jre
-  - awscli
-  - python3-pip
+  - java-1.8.0-openjdk
+  - tmux
 
 write_files:
   - encoding: b64

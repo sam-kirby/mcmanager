@@ -1,4 +1,15 @@
 #!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          monitor
+# Required-Start:    $local_fs $network $syslog
+# Required-Stop:     $local_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Monitors SQS
+# Description:       Monitors SQS for commands for this Minecraft Server
+### END INIT INFO
+
 ID=$(cat /id.txt)
 IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 CODE="£CODE"

@@ -8,24 +8,13 @@
   "TerminateInstancesWithExpiration": true,
   "LaunchSpecifications": [
     {
-      "ImageId": "ami-c7ab5fa0",
+      "ImageId": "ami-0135b45434a538069",
       "InstanceType": "£INSTANCETYPE",
       "KeyName": "£KEY",
       "SpotPrice": "£MAXPRICE",
       "IamInstanceProfile": {
         "Arn": "arn:aws:iam::£ACCOUNT:instance-profile/mcserver"
       },
-      "BlockDeviceMappings": [
-        {
-          "DeviceName": "/dev/sda1",
-          "Ebs": {
-            "DeleteOnTermination": true,
-            "VolumeType": "gp2",
-            "VolumeSize": 8,
-            "SnapshotId": "snap-0340e0db6c3bd8dbc"
-          }
-        }
-      ],
       "SecurityGroups": [
         {
           "GroupId": "£SGID"

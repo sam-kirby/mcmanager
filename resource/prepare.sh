@@ -17,10 +17,13 @@ mount -a
 aws s3 sync s3://$MCMP/$CODE /media/mc --region $REGION --quiet
 aws s3 sync s3://$WORLD/$CODE /media/mc/world --region $REGION --quiet
 sync
-chown -R ubuntu:ubuntu /media/mc
+chown -R ec2-user:ec2-user /media/mc
 chmod -R 770 /media/mc
-update-rc.d mcserver.sh defaults
-update-rc.d monitor.sh defaults 100
+#update-rc.d mcserver.sh defaults
+#update-rc.d monitor.sh defaults 100
+systemctl daemon-reload
+systemctl enable monitor.sh
+systemctl enable mcserver.sh
 (crontab -l 2>/dev/null; echo "*/20 * * * * /usr/sbin/service mcserver.sh backup") | crontab -
 sync
 
