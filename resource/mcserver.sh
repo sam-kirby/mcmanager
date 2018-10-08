@@ -40,22 +40,19 @@ start() {
 
 stop() {
   printf "Stopping '$NAME'... "
-  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "say Server will go down after completing a backup..." Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "say Server will go down after completing a backup..." Enter
+  sleep 1
   backup
   sleep 10
-  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "stop" Enter
-  sleep 5
-  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default kill-session -t $SESSION
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "stop" Enter
   printf "done\n"
 }
 
 backup() {
   printf "Starting server backup of '$NAME'..."
-  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "say Starting a server backup..." Enter
-  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "save-off" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "say Starting a server backup..." Enter "save-off" Enter
   aws s3 sync $APPDIR/world $BUCKET --delete --region $REGION
-  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "save-on" Enter
-  $APPBIN -S /tmp/tmux-"$(id -u ec2-user)"/default send-keys -t $SESSION.0 "say Server backup is complete!" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "save-on" Enter "say Server backup is complete!" Enter
   printf "done\n"
 }
 
