@@ -31,14 +31,57 @@ terminate() {
 
 status() {
 
-  curl -X POST -H "Content-Type: application/json" -d '{
+  curl -X POST -H "Content-Type: application/json" -d\
+  '{
     "messaging-type": "MESSAGE_TAG",
     "tag": "GAME_EVENT",
     "recipient": { "id": '$1' },
     "message": {
-      "text": "WIP FEATURE: Instance is still running...\nThis does not guarantee that Minecraft has not crashed"
+      "text": "Instance is still responding.\nChecking the status of Minecraft..."
     }
-  }' "https://graph.facebook.com/v3.1/me/messages?access_token=$FBTOKEN"
+  }'\
+  https://graph.facebook.com/v3.1/me/messages?access_token=$FBTOKEN
+
+  pgrep java
+
+  if [ $? == 1 ]; then
+    curl -X POST -H "Content-Type: application/json" -d\
+      '{
+        "messaging-type": "MESSAGE_TAG",
+        "tag": "GAME_EVENT",
+        "recipient": { "id": '$1' },
+        "message": {
+          "text": "There appears to be no running JVM on this instance. Uploading latest log, then restarting..."
+        }
+      }'\
+      https://graph.facebook.com/v3.1/me/messages?access_token=$FBTOKEN
+
+    curl  \
+      -F 'recipient={"id":"'$1'"}' \
+      -F 'message={"attachment":{"type":"file", "payload":{}}}' \
+      -F 'filedata=@/media/mc/logs/latest.log;type=text/plain' \
+      https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
+
+    sleep 5
+    reboot
+  else
+    curl -X POST -H "Content-Type: application/json" -d\
+      '{
+        "messaging-type": "MESSAGE_TAG",
+        "tag": "GAME_EVENT",
+        "recipient": { "id": '$1' },
+        "message": {
+          "text": "JVM is still running, do you want to restart?"
+        },
+        "quick_replies":[
+          {
+            "content_type":"text",
+            "title":"Restart",
+            "payload":"RESTART_'$code'"
+          }]
+      }'\
+      https://graph.facebook.com/v3.1/me/messages?access_token=$FBTOKEN
+  fi
 }
 
 (while true; do
@@ -58,6 +101,14 @@ status() {
   if [ ${commandArray[0]} == "status" ]; then
     aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
     status ${commandArray[1]}
+  fi
+  if [ ${commandArray[0]} == "restart" ]; then
+    curl  \
+      -F 'recipient={"id":"'${commandArray[1]}'"}' \
+      -F 'message={"attachment":{"type":"file", "payload":{}}}' \
+      -F 'filedata=@/media/mc/logs/latest.log;type=text/plain' \
+      https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
+    reboot
   fi
   sleep 5
 done) &

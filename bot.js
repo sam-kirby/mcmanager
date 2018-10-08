@@ -193,6 +193,41 @@ function status(server, userID, apiRequest) {
         });
 }
 
+function restart(server, userID, apiRequest) {
+    return new Promise((resolve, reject) => {
+        //check still running
+        ec2.describeSpotFleetRequests({SpotFleetRequestIds: [server.lastSFR]}, (err, data) => {
+            if (err) reject(err);
+            else resolve(data.SpotFleetRequestConfigs[0].SpotFleetRequestState);
+        });
+    })
+        .then((state) => {
+            return new Promise((resolve,reject) => {
+                if(state !== "active" && state !== "submitted")
+                    resolve(`It seems ${server.name} is currently not running`);
+                else if(state === "submitted")
+                    resolve(`The spot request has been submitted but not yet fulfilled`);
+                else {
+                    sqs.sendMessage({QueueUrl:
+                            `https://sqs.${apiRequest.env.region}.amazonaws.com/${apiRequest.env.awsAccountId}/${server.code}`,
+                        MessageBody: "na",
+                        MessageAttributes: {
+                            "cmd":{
+                                DataType: "String",
+                                StringValue: "restart"
+                            },
+                            "user": {
+                                DataType: "String",
+                                StringValue: userID
+                            }}}, (err, data) => {
+                        if (err) reject(err);
+                        else resolve(`Server ${server.name} was instructed to reboot.`);
+                    });
+                }
+            });
+        });
+}
+
 /**
  * Function for directing commands to appropriate functions
  * @param cmd
@@ -229,6 +264,10 @@ function direct(cmd, userID, apiRequest) {
         if (cmd.substr(0,6) === 'STATUS') {
             let target = servers[cmd.substr(7)];
             resolve(status(target, userID, apiRequest));
+        }
+        if (cmd.substr(0,7) === 'RESTART') {
+            let target = servers[cmd.sub(8)];
+            resolve(restart(target, userID, apiRequest));
         }
         if (cmd.substr(0,5) === 'ADMIN') {
             if (users[userID].admin) {
