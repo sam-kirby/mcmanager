@@ -266,7 +266,7 @@ function direct(cmd, userID, apiRequest) {
             resolve(status(target, userID, apiRequest));
         }
         if (cmd.substr(0,7) === 'RESTART') {
-            let target = servers[cmd.sub(8)];
+            let target = servers[cmd.substr(8)];
             resolve(restart(target, userID, apiRequest));
         }
         if (cmd.substr(0,5) === 'ADMIN') {

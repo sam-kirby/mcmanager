@@ -71,14 +71,14 @@ status() {
         "tag": "GAME_EVENT",
         "recipient": { "id": '$1' },
         "message": {
-          "text": "JVM is still running, do you want to restart?"
-        },
-        "quick_replies":[
-          {
-            "content_type":"text",
-            "title":"Restart",
-            "payload":"RESTART_'$code'"
+          "text": "JVM is still running, do you want to restart?",
+          "quick_replies":[
+            {
+              "content_type":"text",
+              "title":"Restart",
+              "payload":"RESTART_'$code'"
           }]
+        }
       }'\
       https://graph.facebook.com/v3.1/me/messages?access_token=$FBTOKEN
   fi
@@ -103,11 +103,15 @@ status() {
     status ${commandArray[1]}
   fi
   if [ ${commandArray[0]} == "restart" ]; then
+    aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
+    service mcserver.sh stop
+    sleep 5
     curl  \
       -F 'recipient={"id":"'${commandArray[1]}'"}' \
       -F 'message={"attachment":{"type":"file", "payload":{}}}' \
       -F 'filedata=@/media/mc/logs/latest.log;type=text/plain' \
       https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
+    sleep 5
     reboot
   fi
   sleep 5
