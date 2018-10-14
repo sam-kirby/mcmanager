@@ -160,8 +160,8 @@ function start (server, apiRequest) {
       server.lastSFR = response
       server.lastState = 'Started'
       discord(server.name, 'started', apiRequest)
-      return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}\n
-      Please wait 5 minutes before connecting or checking its status`
+      return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}\n` +
+      `Please wait 5 minutes before connecting or checking its status`
     } else return response
   }).catch((err) => {
     return `${server.name} could not be started because ${err.message}`

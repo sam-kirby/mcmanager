@@ -116,7 +116,6 @@ function mainMenu () {
 
 /**
  * Determines the state of a server, and if it is still running attempts to stop it.
- * TODO: Check the spot request has a running instance associated with it
  * @param server
  * @param apiRequest
  * @returns {Promise.<TResult>}
@@ -351,6 +350,7 @@ api.addPostDeployConfig('hostedZone', 'Enter the ID of the hosted zone to use wi
 api.addPostDeployConfig('domain', 'Enter the domain to use as the root for the servers:', 'configure-bot')
 api.addPostDeployConfig('sgid', 'Enter the Security Group ID to use with the minecraft servers:', 'configure-mc')
 api.addPostDeployConfig('keyName', 'Enter the name of the key pair to use for ssh connections:', 'configure-mc')
-api.addPostDeployConfig('awsAccountId', 'Enter the AWS account ID that will be used to launch the servers:', 'configure-bot')
+api.addPostDeployConfig('awsAccountId', 'Enter the AWS account ID that will be used to launch the servers:',
+  'configure-bot')
 
 module.exports = api
