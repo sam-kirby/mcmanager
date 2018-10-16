@@ -28,7 +28,17 @@ set -e
 start() {
   printf "Starting '$NAME'... "
   cd $APPDIR
+  #Generate Config Files
   su $USER -c "$APPBIN new-session -d -s $SESSION \"$KF2CMD\""
+  sleep 6
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 C-c
+
+  #Update Config Files - Web
+  sed -i 's/bEnabled.*/bEnabled=true/' /media/kf2ds/KFGame/Config/KFWeb.ini
+
+  #Start Server
+  su $USER -c "$APPBIN new-session -d -s $SESSION \"$KF2CMD\""
+
   printf "done\n"
 }
 
