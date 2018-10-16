@@ -12,11 +12,9 @@
     "aws-sdk": "^2.332.0",
     "claudia-bot-builder": "^4",
     "fs": "0.0.1-security",
-    "minecraft-pinger": "^1.0.3",
     "request": "^2.88.0"
   },
   "devDependencies": {
-    "claudia": "^5.1.1",
-    "standard": "^12.0.1"
+    "claudia": "^5.1.2"
   }
 }
