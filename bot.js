@@ -7,6 +7,7 @@ const ec2 = new aws.EC2()
 const sqs = new aws.SQS()
 const request = require('request')
 const mcstart = require('./helpers/mcstart')
+const kf2start = require('./helpers/kf2start')
 const discord = require('./helpers/discord')
 
 let users
@@ -243,9 +244,9 @@ function direct (cmd, userID, apiRequest) {
     if (cmd.substr(0, 5) === 'START') {
       let target = servers[cmd.substr(6)]
       serversModified = true
-      if (servers[target].special.type === "minecraft")
+      if (target.special.type === "minecraft")
         resolve(mcstart(target, apiRequest))
-      if (servers[target].special.type === "kf2")
+      if (target.special.type === "kf2")
         resolve(kf2start(target, apiRequest))
     }
     if (cmd.substr(0, 4) === 'STOP') {

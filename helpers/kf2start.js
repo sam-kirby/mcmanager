@@ -43,7 +43,7 @@ function genPrepare (server, apiRequest) {
 function genUserData (server, apiRequest) {
   let userData
   return new Promise((resolve, reject) => {
-    fs.readFile('./resource/userdata.yml', (err, data) => {
+    fs.readFile('./resource/kf2/userdata.yml', (err, data) => {
       if (err) reject(err)
       resolve(data)
     })
@@ -154,7 +154,8 @@ function kf2start (server, apiRequest) {
       server.lastState = 'Started'
       discord(server.name, 'started', apiRequest)
       return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}\n` +
-        `The game password is ${server.special.password} and the admin password is ${server.special.admin} (use webadmin on port 8080)`
+        `The game password is ${server.special.password}\n`
+        `To change settings, use Webadmin on port 8080. The user is admin and the password is ${server.special.admin}`
     } else return response
   }).catch((err) => {
     return `${server.name} could not be started because ${err.message}`

@@ -16,7 +16,7 @@ chown -R ec2-user:ec2-user /media/kf2ds
 
 su - ec2-user -c 'curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
 ./steamcmd.sh +login anonymous +force_install_dir /media/kf2ds +app_update 232130 +exit
-aws s3 cp s3://$BUCKET/* /media/kf2ds/KFGame/Config/.
+aws s3 sync s3://$BUCKET/ /media/kf2ds/KFGame/Config/
 chmod -R 770 /media/kf2ds'
 
 systemctl daemon-reload

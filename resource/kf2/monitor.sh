@@ -27,8 +27,6 @@ terminate() {
   aws ec2 cancel-spot-fleet-requests --spot-fleet-request-ids $SFR --terminate-instances --region $REGION
 }
 
-status() { return }
-
 (while true; do
   if [ "$(aws ec2 describe-spot-instance-requests --filter Name=instance-id,Values=$ID\
    --query "SpotFleetRequests[0].Status.Code" --output text --region $REGION)" == "marked-for-termination" ]; then

@@ -30,5 +30,5 @@ runcmd:
 
 power_state:
   mode: reboot
-  timeout: 6000
+  timeout: 18000
   condition: true
