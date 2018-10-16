@@ -6,7 +6,7 @@ const s3 = new aws.S3()
 const ec2 = new aws.EC2()
 const sqs = new aws.SQS()
 const request = require('request')
-const start = require('./helpers/start')
+const mcstart = require('./helpers/mcstart')
 const discord = require('./helpers/discord')
 
 let users
@@ -109,7 +109,10 @@ function mainMenu () {
       .addImage(servers[id].image)
       .addButton('Start', `START_${servers[id].code}`)
       .addButton('Stop', `STOP_${servers[id].code}`)
-      .addButton('Status', `STATUS_${servers[id].code}`)
+    if (servers[id].special.type === "minecraft")
+      reply.addButton('Status', `STATUS_${servers[id].code}`)
+    else if (servers[id].special.type === "kf2")
+      reply.addButton('Restart', `RESTART_${servers[id].code}`)
   }
   return reply.get()
 }
@@ -240,7 +243,10 @@ function direct (cmd, userID, apiRequest) {
     if (cmd.substr(0, 5) === 'START') {
       let target = servers[cmd.substr(6)]
       serversModified = true
-      resolve(start(target, apiRequest))
+      if (servers[target].special.type === "minecraft")
+        resolve(mcstart(target, apiRequest))
+      if (servers[target].special.type === "kf2")
+        resolve(kf2start(target, apiRequest))
     }
     if (cmd.substr(0, 4) === 'STOP') {
       let target = servers[cmd.substr(5)]
@@ -324,18 +330,15 @@ function handleMessage (message, apiRequest) {
         })
       }
     }
-    console.log(err)
-    return `An error has occurred and has been logged:\n${err}`
+    return `An error has occurred:\n${err}`
   })
 }
 
 const api = botBuilder((message, apiRequest) => {
   aws.config.update({ region: apiRequest.env.region })
-  console.log(JSON.stringify(message))
   return handleMessage(message, apiRequest).then((response) => {
     if (serversModified) writeS3JSON(apiRequest.env.configBucket, 'servers.json', servers)
     if (usersModified) writeS3JSON(apiRequest.env.configBucket, 'users.json', users)
-    console.log(response)
     return response
   })
 }, { platforms: ['facebook'] })
@@ -348,8 +351,10 @@ api.addPostDeployConfig('mcmpBucket', 'Bucket containing minecraft mod packs:', 
 api.addPostDeployConfig('worldBucket', 'Bucket containing minecraft worlds:', 'configure-mc')
 api.addPostDeployConfig('hostedZone', 'Enter the ID of the hosted zone to use with this bot:', 'configure-bot')
 api.addPostDeployConfig('domain', 'Enter the domain to use as the root for the servers:', 'configure-bot')
-api.addPostDeployConfig('sgid', 'Enter the Security Group ID to use with the minecraft servers:', 'configure-mc')
-api.addPostDeployConfig('keyName', 'Enter the name of the key pair to use for ssh connections:', 'configure-mc')
+api.addPostDeployConfig('mcsgid', 'Enter the Security Group ID to use with the minecraft servers:', 'configure-mc')
+api.addPostDeployConfig('keyName', 'Enter the name of the key pair to use for ssh connections:', 'configure-bot')
+api.addPostDeployConfig('kf2sgid', 'Enter the Security Group ID to use with the Killing Floor 2 Server:', 'configure-kf2')
+api.addPostDeployConfig('kf2configBucket', 'Bucket containing modified KF2 Config files:', 'configure-kf2')
 api.addPostDeployConfig('awsAccountId', 'Enter the AWS account ID that will be used to launch the servers:',
   'configure-bot')
 

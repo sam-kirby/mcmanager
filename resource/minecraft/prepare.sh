@@ -6,7 +6,6 @@ DOMAIN="£DOMAIN"
 MCMP="£MCMP"
 WORLD="£WORLD"
 
-pip3 install awscli
 mkdir /media/mc
 parted /dev/nvme1n1 --script mklabel gpt mkpart primary 0% 100%
 sync

@@ -5,7 +5,7 @@ const discord = require('./discord')
 
 function genService (server, apiRequest) {
   return new Promise((resolve, reject) => {
-    fs.readFile('./resource/mcserver.sh', (err, data) => {
+    fs.readFile('./resource/minecraft/mcserver.sh', (err, data) => {
       if (err) reject(err)
       let output = data.toString().replace(/£JAR/g, server.special.jar)
       output = output.replace(/£MAXMEM/g, server.special.maxmem)
@@ -19,7 +19,7 @@ function genService (server, apiRequest) {
 
 function genMonitor (server, apiRequest) {
   return new Promise((resolve, reject) => {
-    fs.readFile('./resource/monitor.sh', (err, data) => {
+    fs.readFile('./resource/minecraft/monitor.sh', (err, data) => {
       if (err) reject(err)
       let output = data.toString().replace(/£CODE/g, server.code)
       output = output.replace(/£REGION/g, apiRequest.env.region)
@@ -34,7 +34,7 @@ function genMonitor (server, apiRequest) {
 
 function genPrepare (server, apiRequest) {
   return new Promise((resolve, reject) => {
-    fs.readFile('./resource/prepare.sh', (err, data) => {
+    fs.readFile('./resource/minecraft/prepare.sh', (err, data) => {
       if (err) reject(err)
       let output = data.toString().replace(/£CODE/g, server.code)
       output = output.replace(/£REGION/g, apiRequest.env.region)
@@ -50,7 +50,7 @@ function genPrepare (server, apiRequest) {
 function genUserData (server, apiRequest) {
   let userData
   return new Promise((resolve, reject) => {
-    fs.readFile('./resource/userdata.yml', (err, data) => {
+    fs.readFile('./resource/minecraft/userdata.yml', (err, data) => {
       if (err) reject(err)
       resolve(data)
     })
@@ -75,7 +75,7 @@ function genUserData (server, apiRequest) {
  * @param apiRequest
  * @returns {Promise.<TResult>}
  */
-function start (server, apiRequest) {
+function mcstart (server, apiRequest) {
   let config
   return new Promise((resolve, reject) => {
     if (server.lastState === 'Started') { reject(Error(`${server.name} must be stopped first`)) }
@@ -143,7 +143,7 @@ function start (server, apiRequest) {
         config = config.replace(/£INSTANCETYPE/g, server.instance)
         config = config.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId)
         config = config.replace(/£KEY/g, apiRequest.env.keyName)
-        config = config.replace(/£SGID/g, apiRequest.env.sgid)
+        config = config.replace(/£SGID/g, apiRequest.env.mcsgid)
         config = config.replace(/£MAXPRICE/g, server.maxprice)
         console.log(config)
         ec2.requestSpotFleet({ SpotFleetRequestConfig: JSON.parse(config) }, (err, data) => {
@@ -168,4 +168,4 @@ function start (server, apiRequest) {
   })
 }
 
-module.exports = start
+module.exports = mcstart
