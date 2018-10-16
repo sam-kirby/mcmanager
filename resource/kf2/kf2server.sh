@@ -20,6 +20,7 @@ USER="ec2-user"
 CODE="kf2"
 REGION="£REGION"
 KF2CMD="./Binaries/Win64/KFGameSteamServer.bin.x86_64"
+BUCKET="£BUCKET"
 
 # Include functions
 set -e
@@ -32,6 +33,9 @@ start() {
   su $USER -c "$APPBIN new-session -d -s $SESSION \"$KF2CMD\""
   sleep 6
   $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 C-c
+
+  #Update Config Files from S3
+  aws s3 sync s3://$BUCKET/ /media/kf2ds/KFGame/Config/
 
   #Update Config Files - Web
   sed -i 's/bEnabled.*/bEnabled=true/' /media/kf2ds/KFGame/Config/KFWeb.ini
