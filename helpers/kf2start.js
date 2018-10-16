@@ -8,6 +8,7 @@ function genService (server, apiRequest) {
     fs.readFile('./resource/kf2/kf2server.sh', (err, data) => {
       if (err) reject(err)
       let output = data.toString().replace(/£REGION/g, apiRequest.env.region)
+      output = output.replace(/£BUCKET/g, apiRequest.env.kf2configBucket)
       resolve(Buffer.from(output).toString('base64'))
     })
   })
