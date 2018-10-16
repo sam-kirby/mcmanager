@@ -154,7 +154,7 @@ function kf2start (server, apiRequest) {
       server.lastState = 'Started'
       discord(server.name, 'started', apiRequest)
       return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}\n` +
-        `The game password is ${server.special.password}\n`
+        `The game password is ${server.special.password}\n` +
         `To change settings, use Webadmin on port 8080. The user is admin and the password is ${server.special.admin}`
     } else return response
   }).catch((err) => {
