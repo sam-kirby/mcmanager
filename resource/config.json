@@ -8,7 +8,7 @@
   "TerminateInstancesWithExpiration": true,
   "LaunchSpecifications": [
     {
-      "ImageId": "ami-0135b45434a538069",
+      "ImageId": "£AMI",
       "InstanceType": "£INSTANCETYPE",
       "KeyName": "£KEY",
       "SpotPrice": "£MAXPRICE",

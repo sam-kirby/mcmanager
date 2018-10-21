@@ -130,23 +130,40 @@ function kf2start (server, apiRequest) {
   }).then((priceGood) => {
     return new Promise((resolve, reject) => {
       if (!priceGood) reject(Error(`Spot instance price is currently too high to start ${server.name}`))
-      else {
-        let now = new Date()
-        config = config.replace(/£FROM/g, now.toISOString())
-        config = config.replace(/£TO/g, new Date(now.getTime() + 64800000).toISOString())
-        config = config.replace(/£INSTANCETYPE/g, server.instance)
-        config = config.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId)
-        config = config.replace(/£KEY/g, apiRequest.env.keyName)
-        config = config.replace(/£SGID/g, apiRequest.env.kf2sgid)
-        config = config.replace(/£MAXPRICE/g, server.maxprice)
-        console.log(config)
-        ec2.requestSpotFleet({ SpotFleetRequestConfig: JSON.parse(config) }, (err, data) => {
-          if (err) reject(err)
-          else {
-            resolve(data.SpotFleetRequestId)
+      ec2.describeImages({
+        Filters: [
+          {
+            Name: 'owner-alias',
+            Values: ['amazon']
+          },
+          {
+            Name: 'name',
+            Values: ['amzn2-ami-hvm*']
           }
-        })
-      }
+        ]
+      }, (err, data) => {
+        if (err) reject(err)
+        var result = data.Images.sort((a, b) => (a.CreationDate > b.CreationDate) ? 1 : ((b.CreationDate > a.CreationDate) ? -1 : 0))
+        resolve(result.slice(-1)[0].ImageId)
+      })
+    })
+  }).then((ami) => {
+    return new Promise((resolve, reject) => {
+      let now = new Date()
+      config = config.replace(/£FROM/g, now.toISOString())
+      config = config.replace(/£TO/g, new Date(now.getTime() + 64800000).toISOString())
+      config = config.replace(/£INSTANCETYPE/g, server.instance)
+      config = config.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId)
+      config = config.replace(/£KEY/g, apiRequest.env.keyName)
+      config = config.replace(/£SGID/g, apiRequest.env.kf2sgid)
+      config = config.replace(/£MAXPRICE/g, server.maxprice)
+      config = config.replace(/£AMI/g, ami)
+      ec2.requestSpotFleet({ SpotFleetRequestConfig: JSON.parse(config) }, (err, data) => {
+        if (err) reject(err)
+        else {
+          resolve(data.SpotFleetRequestId)
+        }
+      })
     })
   }).then((response) => {
     console.log(response)
