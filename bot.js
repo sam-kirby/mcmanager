@@ -244,6 +244,7 @@ function direct (cmd, userID, apiRequest) {
     if (cmd.substr(0, 5) === 'START') {
       let target = servers[cmd.substr(6)]
       serversModified = true
+      discord(target.name, 'started', apiRequest, users[userID].first_name)
       if (target.special.type === "minecraft")
         resolve(mcstart(target, apiRequest))
       if (target.special.type === "kf2")
@@ -253,7 +254,7 @@ function direct (cmd, userID, apiRequest) {
       let target = servers[cmd.substr(5)]
       if (target.lastState === 'Stopped') resolve(`It doesn't look like ${target.name} is running`)
       else {
-        discord(target.name, 'stopped', apiRequest)
+        discord(target.name, 'stopped', apiRequest, users[userID].first_name)
         target.lastState = 'Stopped'
         serversModified = true
         resolve(stop(target, apiRequest))

@@ -176,7 +176,6 @@ function mcstart (server, apiRequest) {
     if (response.substr(0, 3) === 'sfr') {
       server.lastSFR = response
       server.lastState = 'Started'
-      discord(server.name, 'started', apiRequest)
       return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}\n` +
       `Please wait 5 minutes before connecting or checking its status`
     } else return response
