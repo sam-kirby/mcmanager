@@ -4,6 +4,12 @@ HOSTEDZONEID="£HOSTEDZONEID"
 DOMAIN="£DOMAIN"
 BUCKET="£BUCKET"
 
+
+IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch "{\"Changes\": [{\"Action\": \"UPSERT\",\"ResourceRecordSet\": {\"Name\": \"kf2.$DOMAIN\",\"Type\": \"A\", \"TTL\":15, \"ResourceRecords\": [ { \"Value\": \"$IP\" } ] } } ] }"
+
+curl http://169.254.169.254/latest/meta-data/instance-id >> /id.txt
+
 mkdir /media/kf2ds
 parted /dev/nvme1n1 --script mklabel gpt mkpart primary 0% 100%
 sync
@@ -23,8 +29,3 @@ systemctl daemon-reload
 systemctl enable monitor.sh
 systemctl enable kf2server.sh
 sync
-
-IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
-aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch "{\"Changes\": [{\"Action\": \"UPSERT\",\"ResourceRecordSet\": {\"Name\": \"kf2.$DOMAIN\",\"Type\": \"A\", \"TTL\":15, \"ResourceRecords\": [ { \"Value\": \"$IP\" } ] } } ] }"
-
-curl http://169.254.169.254/latest/meta-data/instance-id >> /id.txt
