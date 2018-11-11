@@ -17,12 +17,13 @@ ACCOUNT="£ACCOUNT"
 HOSTEDZONEID="£HOSTEDZONEID"
 DOMAIN="£DOMAIN"
 FBTOKEN="£FBTOKEN"
+CODE="£CODE"
 
 SFR=$(aws ec2 describe-instances --instance-ids $ID --query "Reservations[0].Instances[0].Tags[0].Value"\
   --output text --region $REGION)
 
 terminate() {
-  aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch "{\"Changes\": [{\"Action\": \"DELETE\",\"ResourceRecordSet\": {\"Name\": \"kf2.$DOMAIN\",\"Type\": \"A\", \"TTL\":15, \"ResourceRecords\": [ { \"Value\": \"$IP\" } ] } } ] }"
+  aws route53 change-resource-record-sets --hosted-zone-id $HOSTEDZONEID --change-batch "{\"Changes\": [{\"Action\": \"DELETE\",\"ResourceRecordSet\": {\"Name\": \"$CODE.$DOMAIN\",\"Type\": \"A\", \"TTL\":15, \"ResourceRecords\": [ { \"Value\": \"$IP\" } ] } } ] }"
   sleep 5
   aws ec2 cancel-spot-fleet-requests --spot-fleet-request-ids $SFR --terminate-instances --region $REGION
 }
@@ -32,21 +33,21 @@ terminate() {
    --query "SpotFleetRequests[0].Status.Code" --output text --region $REGION)" == "marked-for-termination" ]; then
     terminate
   fi
-  message=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/kf2\
+  message=$(aws sqs receive-message --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE\
     --message-attribute-names cmd user\
     --query "Messages[0].{cmd : MessageAttributes.cmd.StringValue, user : MessageAttributes.user.StringValue}"\
     --region $REGION --output text)
   commandArray=($message)
   if [ ${commandArray[0]} == "stop" ]; then
-    aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/kf2 --region $REGION
+    aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
     terminate
   fi
 #  if [ ${commandArray[0]} == "status" ]; then
-#    aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/kf2 --region $REGION
+#    aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
 #    status ${commandArray[1]}
 #  fi
   if [ ${commandArray[0]} == "restart" ]; then
-    aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/kf2 --region $REGION
+    aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
     sleep 5
     curl  \
       -F 'recipient={"id":"'${commandArray[1]}'"}' \
