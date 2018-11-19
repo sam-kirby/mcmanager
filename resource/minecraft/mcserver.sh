@@ -50,10 +50,11 @@ stop() {
 
 backup() {
   printf "Starting server backup of '$NAME'..."
-  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "say Starting a server backup..." Enter "save-off" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "say Starting a server backup..." Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "save-all" Enter
   aws s3 sync $APPDIR/world $BUCKET --delete --region $REGION
   sleep 1
-  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "save-on" Enter "say Server backup is complete!" Enter
+  $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "say Server backup is complete!" Enter
   printf "done\n"
 }
 
