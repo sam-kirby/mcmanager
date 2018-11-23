@@ -175,9 +175,10 @@ function kf2start (server, apiRequest) {
     if (response.substr(0, 3) === 'sfr') {
       server.lastSFR = response
       server.lastState = 'Started'
-      return `${server.name} is now starting with address ${server.code}.${apiRequest.env.domain}\n` +
-        `The game password is ${server.special.password}\n` +
-        `To change settings, use Webadmin on port 8080. The user is admin and the password is ${server.special.admin}`
+      return `${server.name} is now starting\n` +
+        `Open the console and use the command when Hans is ready\n` +
+        `open ${server.code}.${apiRequest.env.domain.slice(0,-1)}?password=${server.special.password}\n` +
+        `The webadmin is on port 8080; user is admin, password is ${server.special.admin}`
     } else return response
   }).catch((err) => {
     return `${server.name} could not be started because ${err.message}`
