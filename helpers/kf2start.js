@@ -9,6 +9,8 @@ function genService (server, apiRequest) {
       if (err) reject(err)
       let output = data.toString().replace(/£REGION/g, apiRequest.env.region)
       output = output.replace(/£BUCKET/g, apiRequest.env.kf2configBucket)
+      output = output.replace(/£WEBHOOKID/g, apiRequest.env.kf2DiscordID)
+      output = output.replace(/£WEBHOOKTOKEN/g, apiRequest.env.kf2DiscordToken)
       resolve(Buffer.from(output).toString('base64'))
     })
   })

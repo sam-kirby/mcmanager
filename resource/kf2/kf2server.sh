@@ -21,6 +21,8 @@ CODE="kf2"
 REGION="£REGION"
 KF2CMD="./Binaries/Win64/KFGameSteamServer.bin.x86_64"
 BUCKET="£BUCKET"
+WHID="£WEBHOOKID"
+WHT="£WEBHOOKTOKEN"
 
 # Include functions
 set -e
@@ -42,6 +44,11 @@ start() {
 
   #Start Server
   su $USER -c "$APPBIN new-session -d -s $SESSION \"$KF2CMD\""
+
+  sleep 10
+
+  curl -X POST -H "Content-Type: application/json" -d '{"content": "The Doctor will see you now..."}'\
+  https://discordapp.com/api/webhooks/$WHID/$WHT
 
   printf "done\n"
 }

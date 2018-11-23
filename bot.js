@@ -359,5 +359,7 @@ api.addPostDeployConfig('kf2sgid', 'Enter the Security Group ID to use with the 
 api.addPostDeployConfig('kf2configBucket', 'Bucket containing modified KF2 Config files:', 'configure-kf2')
 api.addPostDeployConfig('awsAccountId', 'Enter the AWS account ID that will be used to launch the servers:',
   'configure-bot')
+api.addPostDeployConfig('kf2DiscordID', 'Discord Webhook ID for kf2 servers', 'configure-kf2')
+api.addPostDeployConfig('kf2DiscordToken', 'Discord Webhook Token for kf2 servers', 'configure-kf2')
 
 module.exports = api
