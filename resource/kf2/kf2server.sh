@@ -17,7 +17,9 @@ APPDIR="/media/kf2ds/"
 APPBIN="tmux"
 SESSION=$NAME
 USER="ec2-user"
-CODE="kf2"
+CODE="£CODE"
+DOMAIN="£DOMAIN"
+PASSWORD="£PASSWORD"
 REGION="£REGION"
 KF2CMD="./Binaries/Win64/KFGameSteamServer.bin.x86_64"
 BUCKET="£BUCKET"
@@ -47,7 +49,8 @@ start() {
 
   sleep 10
 
-  curl -X POST -H "Content-Type: application/json" -d '{"content": "The Doctor will see you now..."}' \
+  curl -X POST -H "Content-Type: application/json" \
+  -d '{"content": "The Doctor will see you now...\n`open '$CODE'.'$DOMAIN'?password='$PASSWORD'`"}' \
   https://discordapp.com/api/webhooks/$WHID/$WHT
 
   printf "done\n"

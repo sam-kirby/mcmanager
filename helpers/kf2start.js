@@ -11,6 +11,9 @@ function genService (server, apiRequest) {
       output = output.replace(/£BUCKET/g, apiRequest.env.kf2configBucket)
       output = output.replace(/£WEBHOOKID/g, apiRequest.env.kf2DiscordID)
       output = output.replace(/£WEBHOOKTOKEN/g, apiRequest.env.kf2DiscordToken)
+      output = output.replace(/£CODE/g, server.code)
+      output = output.replace(/£DOMAIN/g, apiRequest.env.domain.slice(0,-1))
+      output = output.replace(/£PASSWORD/g, server.special.password)
       resolve(Buffer.from(output).toString('base64'))
     })
   })
@@ -176,7 +179,7 @@ function kf2start (server, apiRequest) {
       server.lastSFR = response
       server.lastState = 'Started'
       return `${server.name} is now starting\n` +
-        `Open the console and use the command when Hans is ready\n` +
+        `Open the console and use the command below when Hans is ready\n` +
         `open ${server.code}.${apiRequest.env.domain.slice(0,-1)}?password=${server.special.password}\n` +
         `The webadmin is on port 8080; user is admin, password is ${server.special.admin}`
     } else return response
