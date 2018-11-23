@@ -47,7 +47,7 @@ start() {
 
   sleep 10
 
-  curl -X POST -H "Content-Type: application/json" -d '{"content": "The Doctor will see you now..."}'\
+  curl -X POST -H "Content-Type: application/json" -d '{"content": "The Doctor will see you now..."}' \
   https://discordapp.com/api/webhooks/$WHID/$WHT
 
   printf "done\n"
