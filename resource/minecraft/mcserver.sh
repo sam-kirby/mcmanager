@@ -58,7 +58,7 @@ backup() {
   CURRENT=backup-$(date +%y%m%d-%H%M%S).tar.gz
   tar -cjf ../backups/$CURRENT .
   $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "save-on" Enter "say Server backup is complete! Uploading Now..." Enter
-  aws s3 cp $APPDIR/backups/$CURRENT $BACKUPBUCKET --region $REGION
+  aws s3 cp $APPDIR/backups/$CURRENT $BACKUPBUCKET/$CURRENT --region $REGION
   $APPBIN -S /tmp/tmux-"$(id -u ${USER})"/default send-keys -t $SESSION.0 "say Upload successful!" Enter
   printf "done\n"
 }
