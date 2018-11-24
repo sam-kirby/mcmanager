@@ -23,7 +23,7 @@ chmod -R 770 /media/mc
 systemctl daemon-reload
 systemctl enable monitor.sh
 systemctl enable mcserver.sh
-(crontab -l 2>/dev/null; echo "*/20 * * * * /usr/sbin/service mcserver.sh backup") | crontab -
+(crontab -l 2>/dev/null; echo "*/30 * * * * /usr/sbin/service mcserver.sh backup") | crontab -
 sync
 
 IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)

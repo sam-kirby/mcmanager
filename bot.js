@@ -351,6 +351,7 @@ api.addPostDeployConfig('region', 'AWS region in which to launch servers:', 'con
 api.addPostDeployConfig('configBucket', 'Bucket which stores config data:', 'configure-bot')
 api.addPostDeployConfig('mcmpBucket', 'Bucket containing minecraft mod packs:', 'configure-mc')
 api.addPostDeployConfig('worldBucket', 'Bucket containing minecraft worlds:', 'configure-mc')
+api.addPostDeployConfig('mcBackupBucket', 'Bucket to upload snapshot backups to:', 'configure-mc')
 api.addPostDeployConfig('hostedZone', 'Enter the ID of the hosted zone to use with this bot:', 'configure-bot')
 api.addPostDeployConfig('domain', 'Enter the domain to use as the root for the servers:', 'configure-bot')
 api.addPostDeployConfig('mcsgid', 'Enter the Security Group ID to use with the minecraft servers:', 'configure-mc')
@@ -359,7 +360,7 @@ api.addPostDeployConfig('kf2sgid', 'Enter the Security Group ID to use with the 
 api.addPostDeployConfig('kf2configBucket', 'Bucket containing modified KF2 Config files:', 'configure-kf2')
 api.addPostDeployConfig('awsAccountId', 'Enter the AWS account ID that will be used to launch the servers:',
   'configure-bot')
-api.addPostDeployConfig('kf2DiscordID', 'Discord Webhook ID for kf2 servers', 'configure-kf2')
-api.addPostDeployConfig('kf2DiscordToken', 'Discord Webhook Token for kf2 servers', 'configure-kf2')
+api.addPostDeployConfig('kf2DiscordID', 'Discord Webhook ID for kf2 servers:', 'configure-kf2')
+api.addPostDeployConfig('kf2DiscordToken', 'Discord Webhook Token for kf2 servers:', 'configure-kf2')
 
 module.exports = api
