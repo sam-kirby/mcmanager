@@ -8,6 +8,7 @@ const sqs = new aws.SQS()
 const request = require('request')
 const mcstart = require('./helpers/mcstart')
 const kf2start = require('./helpers/kf2start')
+const musicstart = require('./helpers/musicstart')
 const discord = require('./helpers/discord')
 
 let users
@@ -110,9 +111,9 @@ function mainMenu () {
       .addImage(servers[id].image)
       .addButton('Start', `START_${servers[id].code}`)
       .addButton('Stop', `STOP_${servers[id].code}`)
-    if (servers[id].special.type === "minecraft")
+    if (servers[id].special.type === 'minecraft')
       reply.addButton('Status', `STATUS_${servers[id].code}`)
-    else if (servers[id].special.type === "kf2")
+    else if (servers[id].special.type === 'kf2' || servers[id].special.type === 'music')
       reply.addButton('Restart', `RESTART_${servers[id].code}`)
   }
   return reply.get()
@@ -122,7 +123,7 @@ function mainMenu () {
  * Determines the state of a server, and if it is still running attempts to stop it.
  * @param server
  * @param apiRequest
- * @returns {Promise.<TResult>}
+ * @returns {Promise}
  */
 function stop (server, apiRequest) {
   return new Promise((resolve, reject) => {
@@ -249,6 +250,8 @@ function direct (cmd, userID, apiRequest) {
         resolve(mcstart(target, apiRequest))
       if (target.special.type === "kf2")
         resolve(kf2start(target, apiRequest))
+      if (target.special.type === 'music')
+        resolve(musicstart(target, apiRequest))
     }
     if (cmd.substr(0, 4) === 'STOP') {
       let target = servers[cmd.substr(5)]
@@ -349,6 +352,7 @@ api.addPostDeployConfig('discordID', 'Discord Webhook ID:', 'configure-discord')
 api.addPostDeployConfig('discordToken', 'Discord Webhook Token:', 'configure-discord')
 api.addPostDeployConfig('region', 'AWS region in which to launch servers:', 'configure-bot')
 api.addPostDeployConfig('configBucket', 'Bucket which stores config data:', 'configure-bot')
+api.addPostDeployConfig('musicbotBucket', 'Bucket with files required for music bot:', 'configure-music')
 api.addPostDeployConfig('mcmpBucket', 'Bucket containing minecraft mod packs:', 'configure-mc')
 api.addPostDeployConfig('worldBucket', 'Bucket containing minecraft worlds:', 'configure-mc')
 api.addPostDeployConfig('mcBackupBucket', 'Bucket to upload snapshot backups to:', 'configure-mc')
