@@ -151,7 +151,7 @@ function musicstart (server, apiRequest) {
       config = config.replace(/£INSTANCETYPE/g, server.instance)
       config = config.replace(/£ACCOUNT/g, apiRequest.env.awsAccountId)
       config = config.replace(/£KEY/g, apiRequest.env.keyName)
-      config = config.replace(/£SGID/g, apiRequest.env.kf2sgid)
+      config = config.replace(/£SGID/g, apiRequest.env.musicbotsgid)
       config = config.replace(/£MAXPRICE/g, server.maxprice)
       config = config.replace(/£AMI/g, ami)
       ec2.requestSpotFleet({ SpotFleetRequestConfig: JSON.parse(config) }, (err, data) => {

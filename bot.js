@@ -353,6 +353,7 @@ api.addPostDeployConfig('discordToken', 'Discord Webhook Token:', 'configure-dis
 api.addPostDeployConfig('region', 'AWS region in which to launch servers:', 'configure-bot')
 api.addPostDeployConfig('configBucket', 'Bucket which stores config data:', 'configure-bot')
 api.addPostDeployConfig('musicbotBucket', 'Bucket with files required for music bot:', 'configure-music')
+api.addPostDeployConfig('musicbotsgid', 'Enter the security group ID to use when starting the music bot:', 'configure-music')
 api.addPostDeployConfig('mcmpBucket', 'Bucket containing minecraft mod packs:', 'configure-mc')
 api.addPostDeployConfig('worldBucket', 'Bucket containing minecraft worlds:', 'configure-mc')
 api.addPostDeployConfig('mcBackupBucket', 'Bucket to upload snapshot backups to:', 'configure-mc')
