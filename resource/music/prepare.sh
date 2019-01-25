@@ -6,7 +6,7 @@ curl http://169.254.169.254/latest/meta-data/instance-id >> /id.txt
 
 #HACKY WAY TO GET AROUND AWS NOT ALLOWING THIS TO BE SPECIFIED IN SPOT FLEET REQUESTS....
 ID=$(cat /id.txt)
-aws ec2 modify-instance-credit-specification --instance-credit-specification "InstanceId=$ID,CpuCredits=standard"
+aws ec2 modify-instance-credit-specification --instance-credit-specification "InstanceId=$ID,CpuCredits=standard" --region $REGION
 
 yum -y groupinstall "Development Tools"
 
