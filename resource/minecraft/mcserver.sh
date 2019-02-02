@@ -33,7 +33,7 @@ set -e
 start() {
   printf "Starting '$NAME'... "
   cd $APPDIR
-  mkdir backups
+  mkdir -p backups
   su $USER -c "$APPBIN new-session -d -s $SESSION \"$MCARGS\""
   printf "done\n"
 }
