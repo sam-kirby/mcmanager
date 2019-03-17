@@ -13,6 +13,7 @@ function genService (server, apiRequest) {
       output = output.replace(/£WORLD/g, apiRequest.env.worldBucket)
       output = output.replace(/£REGION/g, apiRequest.env.region)
       output = output.replace(/£BACKUPBUCKET/g, apiRequest.env.mcBackupBucket)
+      output = output.replace(/£MCMP/g, apiRequest.env.mcmpBucket)
       resolve(Buffer.from(output).toString('base64'))
     })
   })

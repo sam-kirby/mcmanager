@@ -23,6 +23,7 @@ CODE="£CODE"
 REGION="£REGION"
 #MCARGS="$JAVACMD -server -Xms512M -Xmx$JAVAMAXMEM -XX:PermSize=256M -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -jar $JARFILE nogui"
 MCARGS="$JAVACMD -server -Xms$JAVAMAXMEM -Xmx$JAVAMAXMEM -XX:+UseG1GC -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -Dfml.readTimeout=180 -jar $JARFILE nogui"
+MCMP="£MCMP"
 BUCKET="s3://£WORLD/$CODE"
 BACKUPBUCKET="s3://£BACKUPBUCKET/$CODE"
 
