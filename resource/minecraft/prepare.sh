@@ -13,11 +13,8 @@ mkfs.ext4 /dev/nvme1n1p1 -L mc
 sync
 echo -e "LABEL=mc\t/media/mc\text4\tdefaults\t0\t0" >> /etc/fstab
 mount -a
-aws s3 sync s3://$MCMP/$CODE /media/mc --region $REGION --quiet
 aws s3 sync s3://$WORLD/$CODE /media/mc/world --region $REGION --quiet
 sync
-chown -R ec2-user:ec2-user /media/mc
-chmod -R 770 /media/mc
 #update-rc.d mcserver.sh defaults
 #update-rc.d monitor.sh defaults 100
 systemctl daemon-reload

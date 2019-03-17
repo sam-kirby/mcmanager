@@ -62,9 +62,35 @@ status() {
       -F 'filedata=@/media/mc/logs/latest.log;type=text/plain' \
       https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
 
+    curl  \
+      -F 'recipient={"id":"'${commandArray[1]}'"}' \
+      -F 'message={"attachment":{"type":"file", "payload":{}}}' \
+      -F 'filedata=@/media/mc/crafttweaker.log;type=text/plain' \
+      https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
+
+    zip /media/mc/crash-reports.zip /media/mc/crash-reports
+
+    curl  \
+      -F 'recipient={"id":"'${commandArray[1]}'"}' \
+      -F 'message={"attachment":{"type":"file", "payload":{}}}' \
+      -F 'filedata=@/media/mc/crash-reports.zip;type=text/plain' \
+      https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
+
     sleep 5
     reboot
   else
+    curl  \
+      -F 'recipient={"id":"'${commandArray[1]}'"}' \
+      -F 'message={"attachment":{"type":"file", "payload":{}}}' \
+      -F 'filedata=@/media/mc/logs/latest.log;type=text/plain' \
+      https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
+
+    curl  \
+      -F 'recipient={"id":"'${commandArray[1]}'"}' \
+      -F 'message={"attachment":{"type":"file", "payload":{}}}' \
+      -F 'filedata=@/media/mc/crafttweaker.log;type=text/plain' \
+      https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
+
     curl -X POST -H "Content-Type: application/json" -d\
       '{
         "messaging-type": "MESSAGE_TAG",
@@ -75,7 +101,7 @@ status() {
           "quick_replies":[
             {
               "content_type":"text",
-              "title":"Restart",
+              "title":"Reload?",
               "payload":"RESTART_'$code'"
           }]
         }
@@ -104,15 +130,7 @@ status() {
   fi
   if [ ${commandArray[0]} == "restart" ]; then
     aws sqs purge-queue --queue-url https://sqs.$REGION.amazonaws.com/$ACCOUNT/$CODE --region $REGION
-    service mcserver.sh stop
-    sleep 5
-    curl  \
-      -F 'recipient={"id":"'${commandArray[1]}'"}' \
-      -F 'message={"attachment":{"type":"file", "payload":{}}}' \
-      -F 'filedata=@/media/mc/logs/latest.log;type=text/plain' \
-      https://graph.facebook.com/v3.1/me/messages\?access_token=$FBTOKEN
-    sleep 5
-    reboot
+    service mcserver.sh restart
   fi
   sleep 5
 done) &
