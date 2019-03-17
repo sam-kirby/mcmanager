@@ -102,7 +102,7 @@ status() {
             {
               "content_type":"text",
               "title":"Reload?",
-              "payload":"RESTART_'$code'"
+              "payload":"RESTART_'$CODE'"
           }]
         }
       }'\
